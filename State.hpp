@@ -2,9 +2,10 @@
 #define STATE_GUARD_
 
 class State {
-    const char* name;
 public:
-    const char* getName();
+  const char* getName();
+private:
+  const char* name;
 };
 
 #endif
