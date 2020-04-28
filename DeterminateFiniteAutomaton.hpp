@@ -1,3 +1,6 @@
+#ifndef DETERMINATE_FINITE_AUTOMATON_GUARD_
+#define DETERMINATE_FINITE_AUTOMATON_GUARD_
+
 #include <vector>
 
 #include "State.hpp"
@@ -11,3 +14,5 @@ template <typename T> class DeterminateFiniteAutomaton {
     std::vector<T> alphabet;
     std::vector<State> states;
 };
+
+#endif

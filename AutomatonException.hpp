@@ -1,3 +1,6 @@
+#ifndef AUTOMATON_EXCEPTION_GUARD_
+#define AUTOMATON_EXCEPTION_GUARD_
+
 #include "CustomMessageException.hpp"
 
 class AutomatonException : public CustomMessageException {
@@ -7,3 +10,5 @@ class AutomatonException : public CustomMessageException {
 public:
     AutomatonException(const char* oldStateName, const char* currentStateName, unsigned line);
 };
+
+#endif
