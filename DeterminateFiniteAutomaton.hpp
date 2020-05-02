@@ -8,31 +8,38 @@
 #include "AutomatonException.hpp"
 #include "AutomatonStateException.hpp"
 
-// typedef std::vector<std::vector<State>> TransitionTable;
+typedef std::vector<std::vector<State>> TransitionTable;
 
 template <typename T> class DeterminateFiniteAutomaton {
-    public:
-    friend std::ostream & operator<<(std::ostream&, const DeterminateFiniteAutomaton <T> &);
+public:
+	friend std::ostream & operator<<(std::ostream&, const DeterminateFiniteAutomaton <T> &);
 	friend std::istream& operator>>(std::istream &, DeterminateFiniteAutomaton<T> &);
-	DeterminateFiniteAutomaton();
-	DeterminateFiniteAutomaton(std::vector<T>, std::vector<State>, std::vector<std::vector<State>>, char , std::vector<State>);
-	DeterminateFiniteAutomaton(std::vector<std::vector<State>>);
-	DeterminateFiniteAutomaton(std::vector<State>);
-	
 
+	DeterminateFiniteAutomaton();
 	DeterminateFiniteAutomaton(const DeterminateFiniteAutomaton &);
+	DeterminateFiniteAutomaton(std::vector<T>, std::vector<State>, TransitionTable, char, std::vector<State>);
+	DeterminateFiniteAutomaton(TransitionTable);
+	DeterminateFiniteAutomaton(std::vector<State>);
+
 	~DeterminateFiniteAutomaton();
-	DeterminateFiniteAutomaton& operator=(const DeterminateFiniteAutomaton&);
-    private:
-    std::vector<T> alphabet;
-    std::vector<State> states;
-	std::vector<std::vector<State>> TransitionTable;
-	std::vector<State> FinalState; 
+
+	DeterminateFiniteAutomaton& operator=(const DeterminateFiniteAutomaton &);
+
+private:
+	std::vector<T> alphabet;
+	std::vector<State> states;
+
+	TransitionTable transitionTable;
+	std::vector<State> finalStates;
+
 	unsigned countState;
-	unsigned countAlphabet; 
+	unsigned countAlphabet;
 };
+
 template <typename T>
 std::ostream& operator<<(std::ostream &, const DeterminateFiniteAutomaton<T> &);
+
 template <typename T>
 std::istream& operator>>(std::istream &, DeterminateFiniteAutomaton<T> &);
+
 #endif
