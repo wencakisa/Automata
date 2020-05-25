@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <algorithm>
 
@@ -127,58 +128,132 @@ public:
     }
 
     std::ostream& exportDataToOutputStream(std::ostream& out) const {
-        out << "States count: " << this->states.size() << std::endl;
+        out << this->states.size();
 
-        out << "States: ( ";
         for (State state : this->states){
-            out << state.getName() << " ";
+            out << " " << state.getName();
         }
-        out << ")" << std::endl;
 
-        out << "Alphabet count: " << this->alphabet.size() << std::endl;
+        out << std::endl;
 
-        out << "Alphabet: ( ";
+        // ------------------------------------------------------------
+
+        out << this->alphabet.size();
+
         for (T symbol : this->alphabet) {
-            out << symbol << " ";
+            out << " " << symbol;
         }
-        out << ")" << std::endl;
 
-        out << "Transition table: ( ";
+        out << std::endl;
+
+        // ------------------------------------------------------------
+
         for (std::vector<State> row : this->transitionTable) {
-            out << "[ ";
-
             for (State state : row) {
                 out << state.getName() << " ";
             }
 
-            out << "] ";
+            out << std::endl;
         }
-        out << ")" << std::endl;
 
-        out << "Starting state: ";
-        if (this->getStartingState()) {
-            out << this->getStartingState()->getName();
-        } else {
-            out << "N/A";
-        }
+        // ------------------------------------------------------------
+
+        out << this->getStartingState()->getName();
+
         out << std::endl;
 
-        std::vector<State> finalStates = this->getFinalStates();
-        out << "Final states count: " << finalStates.size() << std::endl;
+        // ------------------------------------------------------------
 
-        out << "Final states: ( ";
+        std::vector<State> finalStates = this->getFinalStates();
+
+        out << finalStates.size();
+
         for (State state : finalStates) {
-            out << state.getName() << " ";
+            out << " " << state.getName();
         }
-        out << ")" << std::endl;
+
+        out << std::endl;
+
+        // ------------------------------------------------------------
 
         return out;
+    }
+
+    std::ifstream& extractDataFromFile(std::ifstream& in) {
+        unsigned statesCount = 0;
+
+        in >> statesCount;
+
+        for (size_t i = 0; i < statesCount; i++) {
+            char stateName[MAX_STR_LEN];
+
+            in >> stateName;
+
+            this->states.push_back(State(stateName));
+        }
+
+        unsigned symbolsCount = 0;
+
+        in >> symbolsCount;
+
+        for (size_t i = 0; i < symbolsCount; i++) {
+            T symbol;
+
+            in >> symbol;
+
+            this->alphabet.push_back(symbol);
+        }
+
+        for (size_t stateIndex = 0; stateIndex < statesCount; stateIndex++) {
+            std::vector<State> rowStates;
+
+            for (size_t symbolIndex = 0; symbolIndex < symbolsCount; symbolIndex++) {
+                char toName[MAX_STR_LEN];
+
+                in >> toName;
+
+                rowStates.push_back(State(toName));
+            }
+
+            this->transitionTable.push_back(rowStates);
+        }
+
+        char startingName[MAX_STR_LEN];
+
+        in >> startingName;
+
+        this->setStartingState(startingName);
+
+        unsigned finalStatesCount = 0;
+
+        in >> finalStatesCount;
+
+        for (size_t i = 0; i < finalStatesCount; i++) {
+            char finalName[MAX_STR_LEN];
+
+            in >> finalName;
+
+            this->setFinalState(finalName);
+        }
+
+        return in;
     }
 
 private:
     std::vector<T> alphabet;
     std::vector<State> states;
     TransitionTable transitionTable;
+
+    template <class N>
+    int vectorIndexOf(std::vector<N> v, N element) const {
+        for (size_t i = 0; i < v.size(); i++) {
+            if (v[i] == element) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 
     State& getStateByName(const char* name) {
         for (State& state : this->states) {
@@ -192,7 +267,7 @@ private:
 
     State& getStateFromTable(const char* name) {
         for (std::vector<State> row : this->transitionTable) {
-            std::vector<State>::iterator it = std::find(row.begin(), row.end(), this->getStateByName(name));
+            auto it = std::find(row.begin(), row.end(), this->getStateByName(name));
 
             if (it != row.end()) {
                 return *it;
@@ -211,6 +286,11 @@ std::ostream& operator<<(std::ostream& out, const DeterminateFiniteAutomaton<T> 
 template <typename T>
 std::istream& operator>>(std::istream& in, DeterminateFiniteAutomaton<T> & automaton) {
     return automaton.extractDataFromInputStream(in);
+}
+
+template <typename T>
+std::ifstream& operator>>(std::ifstream& in, DeterminateFiniteAutomaton<T> & automaton) {
+    return automaton.extractDataFromFile(in);
 }
 
 #endif
