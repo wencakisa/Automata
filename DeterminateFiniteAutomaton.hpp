@@ -58,18 +58,35 @@ public:
         return finalStates;
     }
 
+    bool doesRecognizeWord(const T* word) const {
+        State currentState = *this->getStartingState();
+        size_t wordLength = sizeof(T) / sizeof(word);
+
+        for (size_t letterIndex = 0; letterIndex < wordLength; letterIndex++) {
+            T currentLetter = word[letterIndex];
+            std::cout << "Current letter: " << currentLetter << std::endl;
+
+            size_t letterInAlphabetIndex = this->vectorIndexOf<T>(this->alphabet, currentLetter);
+            size_t currentStateIndex = this->vectorIndexOf<State>(this->states, currentState);
+
+            currentState = this->transitionTable[currentStateIndex][letterInAlphabetIndex];
+        }
+
+        return currentState.getIsFinal();
+    }
+
     std::istream& extractDataFromInputStream(std::istream& in) {
         unsigned statesCount = 0;
 
         std::cout << "Number of states: ";
-        std::cin >> statesCount;
+        in >> statesCount;
 
 
         for (size_t i = 0; i < statesCount; i++) {
             char stateName[MAX_STR_LEN];
 
             std::cout << "State [" << i << "]: ";
-            std::cin >> stateName;
+            in >> stateName;
 
             this->states.push_back(State(stateName));
         }
@@ -77,13 +94,13 @@ public:
         unsigned symbolsCount = 0;
 
         std::cout << "Number of symbols: ";
-        std::cin >> symbolsCount;
+        in >> symbolsCount;
 
         for (size_t i = 0; i < symbolsCount; i++) {
             T symbol;
 
             std::cout << "Symbol [" << i << "]: ";
-            std::cin >> symbol;
+            in >> symbol;
 
             this->alphabet.push_back(symbol);
         }
@@ -95,7 +112,7 @@ public:
                 char toName[MAX_STR_LEN];
 
                 std::cout << "Transition (" << this->states[stateIndex].getName() << ", " << this->alphabet[symbolIndex] << ") -> ";
-                std::cin >> toName;
+                in >> toName;
 
                 rowStates.push_back(State(toName));
             }
@@ -106,20 +123,20 @@ public:
         char startingName[MAX_STR_LEN];
 
         std::cout << "Starting state: ";
-        std::cin >> startingName;
+        in >> startingName;
 
         this->setStartingState(startingName);
 
         unsigned finalStatesCount = 0;
 
         std::cout << "Final states count: ";
-        std::cin >> finalStatesCount;
+        in >> finalStatesCount;
 
         for (size_t i = 0; i < finalStatesCount; i++) {
             char finalName[MAX_STR_LEN];
 
             std::cout << "Final state [" << i << "]: ";
-            std::cin >> finalName;
+            in >> finalName;
 
             this->setFinalState(finalName);
         }
