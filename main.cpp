@@ -2,7 +2,7 @@
 
 #include "DeterminateFiniteAutomaton.hpp"
 
-#define OUTPUT_FILENAME "output.txt"
+#define OUTPUT_FILENAME "automata.txt"
 
 int main() {
     try {
