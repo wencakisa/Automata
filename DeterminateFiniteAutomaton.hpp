@@ -58,13 +58,11 @@ public:
         return finalStates;
     }
 
-    bool doesRecognizeWord(const T* word) const {
+    bool doesRecognizeWord(const T* word, size_t wordLength) const {
         State currentState = *this->getStartingState();
-        size_t wordLength = sizeof(T) / sizeof(word);
 
         for (size_t letterIndex = 0; letterIndex < wordLength; letterIndex++) {
             T currentLetter = word[letterIndex];
-            std::cout << "Current letter: " << currentLetter << std::endl;
 
             size_t letterInAlphabetIndex = this->vectorIndexOf<T>(this->alphabet, currentLetter);
             size_t currentStateIndex = this->vectorIndexOf<State>(this->states, currentState);
@@ -80,7 +78,6 @@ public:
 
         std::cout << "Number of states: ";
         in >> statesCount;
-
 
         for (size_t i = 0; i < statesCount; i++) {
             char stateName[MAX_STR_LEN];
@@ -283,11 +280,11 @@ private:
     }
 
     State& getStateFromTable(const char* name) {
-        for (std::vector<State> row : this->transitionTable) {
-            auto it = std::find(row.begin(), row.end(), this->getStateByName(name));
-
-            if (it != row.end()) {
-                return *it;
+        for (std::vector<State>& row : this->transitionTable) {
+            for (State& state : row) {
+                if (strcmp(state.getName(), name) == 0) {
+                    return state;
+                }
             }
         }
 

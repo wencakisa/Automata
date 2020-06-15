@@ -45,15 +45,15 @@ int main() {
             std::cout << "Give me a word to recognize: ";
             std::cin >> word_int;
 
-            int word[MAX_STR_LEN];
-            size_t i = 0;
+            int size = std::to_string(word_int).length();
+            int word[size];
 
-            while (word_int > 0) {
-                word[i++] = word_int % 10;
+            for (int i = size - 1; i >= 0; i--) {
+                word[i] = word_int % 10;
                 word_int /= 10;
             }
 
-            std::cout << "Word recognized: " << std::boolalpha << automaton->doesRecognizeWord(word) << std::endl;
+            std::cout << "Word recognized: " << std::boolalpha << automaton->doesRecognizeWord(word, size) << std::endl;
 
             // ------------------------------------------------------------
             // File output
@@ -96,7 +96,7 @@ int main() {
             std::cout << "Give me a word to recognize: ";
             std::cin >> word;
 
-            std::cout << "Word recognized: " << std::boolalpha << automaton->doesRecognizeWord(word) << std::endl;
+            std::cout << "Word recognized: " << std::boolalpha << automaton->doesRecognizeWord(word, strlen(word)) << std::endl;
 
             // ------------------------------------------------------------
             // File output
