@@ -20,6 +20,16 @@ template <typename T> class DeterminateFiniteAutomaton {
 public:
     DeterminateFiniteAutomaton() {}
 
+    DeterminateFiniteAutomaton(
+        const std::vector<T>& alphabet,
+        const std::vector<State>& states,
+        const TransitionTable& transitionTable
+    ) :
+        alphabet(alphabet),
+        states(states),
+        transitionTable(transitionTable)
+    {}
+
     const State* getStartingState() const {
         for (const State& state : this->states) {
             if (state.getIsStarting()) {
@@ -251,6 +261,30 @@ public:
         }
 
         return in;
+    }
+
+    DeterminateFiniteAutomaton<T> operator^(const DeterminateFiniteAutomaton<T> & other) const {
+        DeterminateFiniteAutomaton<T> resultAutomata(other);
+
+        for (State& state : resultAutomata.states) {
+            if (state.getIsFinal()) {
+                state.setIsFinal(false);
+            } else {
+                state.setIsFinal(true);
+            }
+        }
+
+        for (std::vector<State>& row : resultAutomata.transitionTable) {
+            for (State& state : row) {
+                if (state.getIsFinal()) {
+                    state.setIsFinal(false);
+                } else {
+                    state.setIsFinal(true);
+                }
+            }
+        }
+
+        return resultAutomata;
     }
 
 private:
